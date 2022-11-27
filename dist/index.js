@@ -521,6 +521,9 @@ function getInputs() {
         if (!(result.repositoryPath + path.sep).startsWith(githubWorkspacePath + path.sep)) {
             throw new Error(`Repository path '${result.repositoryPath}' is not under '${githubWorkspacePath}'`);
         }
+        // Credentials for .netrc.
+        result.actor = core.getInput('actor');
+        result.token = core.getInput('token');
         // TODO(dio): Currently, we don't support pull_request "closed" event.
         // Note: in "closed" event, the ref from github.context is unqualifed like
         // "main" instead of "refs/heads/main".

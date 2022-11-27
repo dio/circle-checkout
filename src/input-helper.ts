@@ -51,6 +51,10 @@ export async function getInputs(): Promise<IGitSourceSettings> {
     )
   }
 
+  // Credentials for .netrc.
+  result.actor = core.getInput('actor')
+  result.token = core.getInput('token')
+
   // TODO(dio): Currently, we don't support pull_request "closed" event.
   // Note: in "closed" event, the ref from github.context is unqualifed like
   // "main" instead of "refs/heads/main".
