@@ -333,11 +333,11 @@ function getSource(settings) {
         const git = yield getGitCommandManager(settings);
         core.endGroup();
         // Set .netrc for accessing current actor's repository
-        core.startGroup('Setting up .netrc');
+        core.startGroup('Setting up access');
         yield netrcHelper.createNetrc(settings);
         core.endGroup();
         if (git) {
-            core.startGroup('Initializing the repository');
+            core.startGroup(`Initializing the repository ${repositoryUrl}`);
             yield git.init();
             yield git.remoteAdd('origin', repositoryUrl);
             core.endGroup();
@@ -781,15 +781,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getFetchUrl = void 0;
 const assert = __importStar(__nccwpck_require__(9491));
-const url_1 = __nccwpck_require__(7310);
 function getFetchUrl(settings) {
     assert.ok(settings.repositoryOwner, 'settings.repositoryOwner must be defined');
     assert.ok(settings.repositoryName, 'settings.repositoryName must be defined');
-    const serviceUrl = new url_1.URL('https://github.com'); // Only support github.com for now.
-    const encodedOwner = encodeURIComponent(settings.repositoryOwner);
-    const encodedName = encodeURIComponent(settings.repositoryName);
-    // "origin" is SCHEME://HOSTNAME[:PORT]
-    return `${serviceUrl.origin}/${encodedOwner}/${encodedName}`;
+    return `https://github.com/${settings.repositoryOwner}/${settings.repositoryName}`;
 }
 exports.getFetchUrl = getFetchUrl;
 

@@ -25,12 +25,12 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
   core.endGroup()
 
   // Set .netrc for accessing current actor's repository
-  core.startGroup('Setting up .netrc')
+  core.startGroup('Setting up access')
   await netrcHelper.createNetrc(settings)
   core.endGroup()
 
   if (git) {
-    core.startGroup('Initializing the repository')
+    core.startGroup(`Initializing the repository ${repositoryUrl}`)
     await git.init()
     await git.remoteAdd('origin', repositoryUrl)
     core.endGroup()
