@@ -1,0 +1,14 @@
+name: 'Checkout'
+description: 'Checkout a Git repository at a particular version'
+inputs:
+  repository:
+    default: ${{ github.repository }}
+  actor:
+    default: ${{ github.actor }}
+  token:
+    default: ${{ github.token }}
+
+runs:
+  using: node16
+  main: dist/index.js
+  post: dist/index.js
