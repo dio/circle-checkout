@@ -317,6 +317,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const fsHelper = __importStar(__nccwpck_require__(7219));
 const urlHelper = __importStar(__nccwpck_require__(9437));
 const gitCommandManager = __importStar(__nccwpck_require__(738));
+const netrcHelper = __importStar(__nccwpck_require__(5578));
 function getSource(settings) {
     return __awaiter(this, void 0, void 0, function* () {
         // Repository URL
@@ -331,13 +332,17 @@ function getSource(settings) {
         core.startGroup('Getting Git version info');
         const git = yield getGitCommandManager(settings);
         core.endGroup();
+        // Set .netrc for accessing current actor's repository
+        core.startGroup('Setting up .netrc');
+        yield netrcHelper.createNetrc(settings);
+        core.endGroup();
         if (git) {
             core.startGroup('Initializing the repository');
             yield git.init();
             yield git.remoteAdd('origin', repositoryUrl);
             core.endGroup();
             core.startGroup('Fetching the repository');
-            yield git.fetch(repositoryUrl);
+            yield git.fetch(settings.ref);
             core.endGroup();
             core.startGroup('Checking out the ref');
             yield git.checkout(settings.ref, settings.commit);
@@ -574,7 +579,6 @@ const core = __importStar(__nccwpck_require__(2186));
 const coreCommand = __importStar(__nccwpck_require__(7351));
 const gitSourceProvider = __importStar(__nccwpck_require__(9210));
 const inputHelper = __importStar(__nccwpck_require__(5480));
-const netrcHelper = __importStar(__nccwpck_require__(5578));
 const stateHelper = __importStar(__nccwpck_require__(8647));
 function run() {
     var _a;
@@ -589,8 +593,6 @@ function run() {
                 // Register problem matcher
                 coreCommand.issueCommand('add-matcher', {}, path.join(__dirname, 'problem-matcher.json'));
             }
-            // Set .netrc for accessing current actor's repository.
-            yield netrcHelper.createNetrc(sourceSettings);
             yield gitSourceProvider.getSource(sourceSettings);
         }
         catch (error) {

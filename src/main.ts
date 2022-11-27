@@ -3,7 +3,6 @@ import * as core from '@actions/core'
 import * as coreCommand from '@actions/core/lib/command'
 import * as gitSourceProvider from './git-source-provider'
 import * as inputHelper from './input-helper'
-import * as netrcHelper from './netrc-helper'
 import * as stateHelper from './state-helper'
 
 async function run(): Promise<void> {
@@ -25,9 +24,6 @@ async function run(): Promise<void> {
         path.join(__dirname, 'problem-matcher.json')
       )
     }
-
-    // Set .netrc for accessing current actor's repository.
-    await netrcHelper.createNetrc(sourceSettings)
     await gitSourceProvider.getSource(sourceSettings)
   } catch (error) {
     core.setFailed(`${(error as any)?.message ?? error}`)

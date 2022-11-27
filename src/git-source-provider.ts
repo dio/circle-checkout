@@ -3,6 +3,7 @@ import * as core from '@actions/core'
 import * as fsHelper from './fs-helper'
 import * as urlHelper from './url-helper'
 import * as gitCommandManager from './git-command-manager'
+import * as netrcHelper from './netrc-helper'
 import {IGitSourceSettings} from './git-source-settings'
 import {IGitCommandManager} from './git-command-manager'
 
@@ -16,12 +17,16 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
   if (fsHelper.fileExistsSync(settings.repositoryPath)) {
     await io.rmRF(settings.repositoryPath)
   }
-
   await io.mkdirP(settings.repositoryPath)
 
   // Git command manager
   core.startGroup('Getting Git version info')
   const git = await getGitCommandManager(settings)
+  core.endGroup()
+
+  // Set .netrc for accessing current actor's repository
+  core.startGroup('Setting up .netrc')
+  await netrcHelper.createNetrc(settings)
   core.endGroup()
 
   if (git) {
@@ -31,7 +36,7 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
     core.endGroup()
 
     core.startGroup('Fetching the repository')
-    await git.fetch(repositoryUrl)
+    await git.fetch(settings.ref)
     core.endGroup()
 
     core.startGroup('Checking out the ref')
