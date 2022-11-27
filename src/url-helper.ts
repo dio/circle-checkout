@@ -7,5 +7,5 @@ export function getFetchUrl(settings: IGitSourceSettings): string {
     'settings.repositoryOwner must be defined'
   )
   assert.ok(settings.repositoryName, 'settings.repositoryName must be defined')
-  return `https://github.com/${settings.repositoryOwner}/${settings.repositoryName}`
+  return `https://github.com/${settings.repositoryOwner}/${settings.repositoryName}.git`
 }
