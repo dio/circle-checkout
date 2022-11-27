@@ -22,6 +22,7 @@ export async function createCommandManager(
 }
 
 class GitCommandManager {
+  // See: this.execGit where this env is being used.
   private gitEnv = {
     GIT_TERMINAL_PROMPT: '0', // Disable git prompt
     GCM_INTERACTIVE: 'Never' // Disable prompting for git credential manager

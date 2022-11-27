@@ -157,6 +157,7 @@ exports.createCommandManager = createCommandManager;
 class GitCommandManager {
     // Private constructor; use createCommandManager()
     constructor() {
+        // See: this.execGit where this env is being used.
         this.gitEnv = {
             GIT_TERMINAL_PROMPT: '0',
             GCM_INTERACTIVE: 'Never' // Disable prompting for git credential manager
