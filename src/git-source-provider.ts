@@ -12,7 +12,6 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
   core.info(
     `Syncing repository: ${settings.repositoryOwner}/${settings.repositoryName}`
   )
-  const repositoryUrl = urlHelper.getFetchUrl(settings)
   // Remove conflicting file path
   if (fsHelper.fileExistsSync(settings.repositoryPath)) {
     await io.rmRF(settings.repositoryPath)
@@ -30,6 +29,8 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
   core.endGroup()
 
   if (git) {
+    const repositoryUrl = urlHelper.getFetchUrl(settings)
+
     core.startGroup(`Initializing the repository ${repositoryUrl}`)
     await git.init()
     await git.remoteAdd('origin', repositoryUrl)

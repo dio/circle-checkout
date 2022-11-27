@@ -322,7 +322,6 @@ function getSource(settings) {
     return __awaiter(this, void 0, void 0, function* () {
         // Repository URL
         core.info(`Syncing repository: ${settings.repositoryOwner}/${settings.repositoryName}`);
-        const repositoryUrl = urlHelper.getFetchUrl(settings);
         // Remove conflicting file path
         if (fsHelper.fileExistsSync(settings.repositoryPath)) {
             yield io.rmRF(settings.repositoryPath);
@@ -337,6 +336,7 @@ function getSource(settings) {
         yield netrcHelper.createNetrc(settings);
         core.endGroup();
         if (git) {
+            const repositoryUrl = urlHelper.getFetchUrl(settings);
             core.startGroup(`Initializing the repository ${repositoryUrl}`);
             yield git.init();
             yield git.remoteAdd('origin', repositoryUrl);
@@ -784,7 +784,7 @@ const assert = __importStar(__nccwpck_require__(9491));
 function getFetchUrl(settings) {
     assert.ok(settings.repositoryOwner, 'settings.repositoryOwner must be defined');
     assert.ok(settings.repositoryName, 'settings.repositoryName must be defined');
-    return `https://github.com/${settings.repositoryOwner}/${settings.repositoryName}`;
+    return `https://github.com/${settings.repositoryOwner}/${settings.repositoryName}.git`;
 }
 exports.getFetchUrl = getFetchUrl;
 
