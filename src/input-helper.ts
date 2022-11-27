@@ -50,6 +50,13 @@ export async function getInputs(): Promise<IGitSourceSettings> {
       `Repository path '${result.repositoryPath}' is not under '${githubWorkspacePath}'`
     )
   }
+
+  // TODO(dio): Currently, we don't support pull_request "closed" event.
+  // Note: in "closed" event, the ref from github.context is unqualifed like
+  // "main" instead of "refs/heads/main".
+  result.ref = github.context.ref
+    .replace('refs/', '')
+    .replace('/merge', '/head')
   result.commit = (await workflowContextHelper.getAfterSha()) || ''
   return result
 }

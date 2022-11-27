@@ -11,6 +11,8 @@ export const MinimumGitVersion = new GitVersion('2.18')
 export interface IGitCommandManager {
   init(): Promise<void>
   remoteAdd(remoteName: string, remoteUrl: string): Promise<void>
+  fetch(ref: string): Promise<void>
+  checkout(ref: string, startPoint: string): Promise<void>
 }
 
 export async function createCommandManager(
@@ -74,6 +76,28 @@ class GitCommandManager {
 
   async remoteAdd(remoteName: string, remoteUrl: string): Promise<void> {
     await this.execGit(['remote', 'add', remoteName, remoteUrl])
+  }
+
+  async fetch(ref: string): Promise<void> {
+    await this.execGit([
+      '-c',
+      'protocol.version=2',
+      'fetch',
+      '--force',
+      'origin',
+      `+refs/${ref}:refs/remotes/origin/${ref}`
+    ])
+  }
+
+  async checkout(ref: string, startPoint: string): Promise<void> {
+    const args = ['checkout', '--progress', '--force']
+    if (startPoint) {
+      args.push('-B', ref, startPoint)
+    } else {
+      args.push(ref)
+    }
+
+    await this.execGit(args)
   }
 
   private async execGit(

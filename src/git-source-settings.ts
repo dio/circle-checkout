@@ -15,6 +15,11 @@ export interface IGitSourceSettings {
   repositoryName: string
 
   /**
+   * ref
+   */
+  ref: string
+
+  /**
    * The commit to checkout
    */
   commit: string

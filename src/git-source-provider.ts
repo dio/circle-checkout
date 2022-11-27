@@ -3,8 +3,8 @@ import * as core from '@actions/core'
 import * as fsHelper from './fs-helper'
 import * as urlHelper from './url-helper'
 import * as gitCommandManager from './git-command-manager'
-import { IGitSourceSettings } from './git-source-settings'
-import { IGitCommandManager } from './git-command-manager'
+import {IGitSourceSettings} from './git-source-settings'
+import {IGitCommandManager} from './git-command-manager'
 
 export async function getSource(settings: IGitSourceSettings): Promise<void> {
   // Repository URL
@@ -29,9 +29,16 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
     await git.init()
     await git.remoteAdd('origin', repositoryUrl)
     core.endGroup()
-  }
 
-  // Handle if not git.
+    core.startGroup('Fetching the repository')
+    await git.fetch(repositoryUrl)
+    core.endGroup()
+
+    core.startGroup('Checking out the ref')
+    await git.checkout(settings.ref, settings.commit)
+    core.endGroup()
+  }
+  // TODO(dio): Handle if git is not initialized
 }
 
 async function getGitCommandManager(

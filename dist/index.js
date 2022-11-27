@@ -209,6 +209,30 @@ class GitCommandManager {
             yield this.execGit(['remote', 'add', remoteName, remoteUrl]);
         });
     }
+    fetch(ref) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.execGit([
+                '-c',
+                'protocol.version=2',
+                'fetch',
+                '--force',
+                'origin',
+                `+refs/${ref}:refs/remotes/origin/${ref}`
+            ]);
+        });
+    }
+    checkout(ref, startPoint) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const args = ['checkout', '--progress', '--force'];
+            if (startPoint) {
+                args.push('-B', ref, startPoint);
+            }
+            else {
+                args.push(ref);
+            }
+            yield this.execGit(args);
+        });
+    }
     execGit(args, allowAllExitCodes = false, silent = false) {
         return __awaiter(this, void 0, void 0, function* () {
             fsHelper.directoryExistsSync(this.workingDirectory, true);
@@ -311,8 +335,14 @@ function getSource(settings) {
             yield git.init();
             yield git.remoteAdd('origin', repositoryUrl);
             core.endGroup();
+            core.startGroup('Fetching the repository');
+            yield git.fetch(repositoryUrl);
+            core.endGroup();
+            core.startGroup('Checking out the ref');
+            yield git.checkout(settings.ref, settings.commit);
+            core.endGroup();
         }
-        // Handle if not git.
+        // TODO(dio): Handle if git is not initialized
     });
 }
 exports.getSource = getSource;
@@ -485,6 +515,12 @@ function getInputs() {
         if (!(result.repositoryPath + path.sep).startsWith(githubWorkspacePath + path.sep)) {
             throw new Error(`Repository path '${result.repositoryPath}' is not under '${githubWorkspacePath}'`);
         }
+        // TODO(dio): Currently, we don't support pull_request "closed" event.
+        // Note: in "closed" event, the ref from github.context is unqualifed like
+        // "main" instead of "refs/heads/main".
+        result.ref = github.context.ref
+            .replace('refs/', '')
+            .replace('/merge', '/head');
         result.commit = (yield workflowContextHelper.getAfterSha()) || '';
         return result;
     });
