@@ -234,6 +234,14 @@ class GitCommandManager {
             yield this.execGit(args);
         });
     }
+    log1(format) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let args = format ? ['log', '-1', format] : ['log', '-1'];
+            let silent = format ? false : true;
+            const output = yield this.execGit(args, false, silent);
+            return output.stdout;
+        });
+    }
     execGit(args, allowAllExitCodes = false, silent = false) {
         return __awaiter(this, void 0, void 0, function* () {
             fsHelper.directoryExistsSync(this.workingDirectory, true);
@@ -347,6 +355,7 @@ function getSource(settings) {
             core.startGroup('Checking out the ref');
             yield git.checkout(settings.ref, settings.commit);
             core.endGroup();
+            yield git.log1("--format='%H'");
         }
         // TODO(dio): Handle if git is not initialized
     });
@@ -521,6 +530,9 @@ function getInputs() {
         if (!(result.repositoryPath + path.sep).startsWith(githubWorkspacePath + path.sep)) {
             throw new Error(`Repository path '${result.repositoryPath}' is not under '${githubWorkspacePath}'`);
         }
+        // Credentials for .netrc.
+        result.actor = core.getInput('actor');
+        result.token = core.getInput('token');
         // TODO(dio): Currently, we don't support pull_request "closed" event.
         // Note: in "closed" event, the ref from github.context is unqualifed like
         // "main" instead of "refs/heads/main".

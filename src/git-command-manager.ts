@@ -13,6 +13,7 @@ export interface IGitCommandManager {
   remoteAdd(remoteName: string, remoteUrl: string): Promise<void>
   fetch(ref: string): Promise<void>
   checkout(ref: string, startPoint: string): Promise<void>
+  log1(format?: string): Promise<string>
 }
 
 export async function createCommandManager(
@@ -99,6 +100,13 @@ class GitCommandManager {
     }
 
     await this.execGit(args)
+  }
+
+  async log1(format?: string): Promise<string> {
+    let args = format ? ['log', '-1', format] : ['log', '-1']
+    let silent = format ? false : true
+    const output = await this.execGit(args, false, silent)
+    return output.stdout
   }
 
   private async execGit(

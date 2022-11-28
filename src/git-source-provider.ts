@@ -43,6 +43,8 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
     core.startGroup('Checking out the ref')
     await git.checkout(settings.ref, settings.commit)
     core.endGroup()
+
+    await git.log1("--format='%H'")
   }
   // TODO(dio): Handle if git is not initialized
 }
