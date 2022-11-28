@@ -36,13 +36,13 @@ export async function getSource(settings: IGitSourceSettings): Promise<void> {
     await git.remoteAdd('origin', repositoryUrl)
     core.endGroup()
 
-    // core.startGroup('Fetching the repository')
-    // await git.fetch(settings.ref)
-    // core.endGroup()
+    core.startGroup('Fetching the repository')
+    await git.fetch(settings.ref)
+    core.endGroup()
 
-    // core.startGroup('Checking out the ref')
-    // await git.checkout(settings.ref, settings.commit)
-    // core.endGroup()
+    core.startGroup('Checking out the ref')
+    await git.checkout(settings.ref, settings.commit)
+    core.endGroup()
   }
   // TODO(dio): Handle if git is not initialized
 }

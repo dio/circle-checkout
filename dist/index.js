@@ -341,12 +341,12 @@ function getSource(settings) {
             yield git.init();
             yield git.remoteAdd('origin', repositoryUrl);
             core.endGroup();
-            // core.startGroup('Fetching the repository')
-            // await git.fetch(settings.ref)
-            // core.endGroup()
-            // core.startGroup('Checking out the ref')
-            // await git.checkout(settings.ref, settings.commit)
-            // core.endGroup()
+            core.startGroup('Fetching the repository');
+            yield git.fetch(settings.ref);
+            core.endGroup();
+            core.startGroup('Checking out the ref');
+            yield git.checkout(settings.ref, settings.commit);
+            core.endGroup();
         }
         // TODO(dio): Handle if git is not initialized
     });
